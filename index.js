@@ -4,30 +4,36 @@ import cors from 'cors';
 const server = express();
 server.use(express.json());
 server.use(cors());
-const user = {
-  username: '',
-  avatar: '',
-};
-const tweet = {
-  username: '',
-  tweet: '',
-};
 const allUsers = [];
 const allTweets = [];
 
 server.post('/sign-up', (request, response) => {
-  user.username = request.body.username;
-  user.avatar = request.body.avatar;
-  allUsers.push(user);
-  response.send('OK');
+  console.log(`teste ${request.body.avatar === ''}`);
+  if (request.body.avatar === '' || request.body.username === '') {
+    response.status(400).send('Todos os campos são obrigatórios!');
+  } else {
+    allUsers.push(request.body);
+    response.send('OK');
+  }
 });
 
 server.post('/tweets', (request, response) => {
-  tweet.username = request.body.username;
-  tweet.tweet = request.body.tweet;
-  allTweets.push(tweet);
-  console.log(allTweets);
+  const tweet = request.body;
+  const { avatar } = allUsers.find((user) => user.username === tweet.username);
+  const tweetsWithAvatar = {
+    ...tweet,
+    avatar,
+  };
+  allTweets.push(tweetsWithAvatar);
   response.send('OK');
+});
+
+server.get('/tweets', (request, response) => {
+  if (allTweets.length < 10) {
+    response.send(allTweets);
+  } else {
+    response.send(allTweets.slice((allTweets.length - 10), allTweets.length));
+  }
 });
 
 server.listen(5000);
