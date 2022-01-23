@@ -8,24 +8,27 @@ const allUsers = [];
 const allTweets = [];
 
 server.post('/sign-up', (request, response) => {
-  console.log(`teste ${request.body.avatar === ''}`);
   if (request.body.avatar === '' || request.body.username === '') {
     response.status(400).send('Todos os campos são obrigatórios!');
   } else {
     allUsers.push(request.body);
-    response.send('OK');
+    response.status(201).send('OK');
   }
 });
 
 server.post('/tweets', (request, response) => {
-  const tweet = request.body;
-  const { avatar } = allUsers.find((user) => user.username === tweet.username);
-  const tweetsWithAvatar = {
-    ...tweet,
-    avatar,
-  };
-  allTweets.push(tweetsWithAvatar);
-  response.send('OK');
+  if (request.body.tweet === '' || request.body.username === '') {
+    response.status(400).send('Todos os campos são obrigatórios!');
+  } else {
+    const tweet = request.body;
+    const { avatar } = allUsers.find((user) => user.username === tweet.username);
+    const tweetsWithAvatar = {
+      ...tweet,
+      avatar,
+    };
+    allTweets.push(tweetsWithAvatar);
+    response.status(201).send('OK');
+  }
 });
 
 server.get('/tweets', (request, response) => {
@@ -34,6 +37,11 @@ server.get('/tweets', (request, response) => {
   } else {
     response.send(allTweets.slice((allTweets.length - 10), allTweets.length));
   }
+});
+
+server.get('/tweets/:username', (request, response) => {
+  const filteredTweets = allTweets.filter((tweets) => request.params.username === tweets.username);
+  response.send(filteredTweets);
 });
 
 server.listen(5000);
