@@ -8,13 +8,25 @@ const user = {
   username: '',
   avatar: '',
 };
+const tweet = {
+  username: '',
+  tweet: '',
+};
 const allUsers = [];
+const allTweets = [];
 
 server.post('/sign-up', (request, response) => {
   user.username = request.body.username;
   user.avatar = request.body.avatar;
   allUsers.push(user);
-  console.log(allUsers);
+  response.send('OK');
+});
+
+server.post('/tweets', (request, response) => {
+  tweet.username = request.body.username;
+  tweet.tweet = request.body.tweet;
+  allTweets.push(tweet);
+  console.log(allTweets);
   response.send('OK');
 });
 
