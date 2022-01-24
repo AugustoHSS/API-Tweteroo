@@ -29,16 +29,19 @@ server.post('/tweets', (request, response) => {
       avatar,
     };
     allTweets.push(tweetsWithAvatar);
-    console.log(allTweets);
     response.status(201).send('OK');
   }
 });
 
 server.get('/tweets', (request, response) => {
+  const { page } = request.query;
   if (allTweets.length < 10) {
     response.send(allTweets);
   } else {
-    response.send(allTweets.slice((allTweets.length - 10), allTweets.length));
+    response.send(allTweets.slice(
+      (allTweets.length - 10 * page),
+      allTweets.length - ((page - 1) * 10),
+    ));
   }
 });
 
