@@ -17,16 +17,19 @@ server.post('/sign-up', (request, response) => {
 });
 
 server.post('/tweets', (request, response) => {
-  if (request.body.tweet === '' || request.body.username === '') {
+  if (request.body.tweet === '' || request.header.username === '') {
     response.status(400).send('Todos os campos são obrigatórios!');
   } else {
     const tweet = request.body;
-    const { avatar } = allUsers.find((user) => user.username === tweet.username);
+    const username = request.header('User');
+    const { avatar } = allUsers.find((user) => user.username === username);
     const tweetsWithAvatar = {
       ...tweet,
+      username,
       avatar,
     };
     allTweets.push(tweetsWithAvatar);
+    console.log(allTweets);
     response.status(201).send('OK');
   }
 });
